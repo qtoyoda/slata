@@ -1,0 +1,8 @@
+# don't commit api key for slack
+service/config/secrets.cfg
+
+# this is probably kinda big
+venv
+
+# nyeh
+service/__pycache__/

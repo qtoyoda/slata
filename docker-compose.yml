@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+    service:
+        restart: always
+        build: ./service/
+        volumes:
+            - ./log:/usr/src/app/log
+        ports:
+            - "5000:5000"
+        environment:
+            - DEBUG=1

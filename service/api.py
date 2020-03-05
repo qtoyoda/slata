@@ -63,7 +63,7 @@ def get_sentiment():
 def get_message_count():
     global channels
     update_channels()
-    prev_months = request.args.get('n_months', 3)
+    prev_months = int(request.args.get('n_months', 3))
     url = SLACK_API + CONVERSATION_HISTORY_RESOURCE
     bearer = current_app.config["SLACK_BEARER"]
     headers = { 'Authorization':  'Bearer ' + bearer } 

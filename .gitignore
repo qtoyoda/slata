@@ -5,4 +5,4 @@ service/config/secrets.cfg
 venv
 
 # nyeh
-service/__pycache__/
+service/__pycache__/.DS_Store

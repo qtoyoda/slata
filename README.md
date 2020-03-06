@@ -15,3 +15,10 @@ Sanity Check
 ```
 curl http://localhost:5000/v1/status
 ```
+
+How to Run Front-end
+---
+```
+cd slata-fe
+npm start
+```

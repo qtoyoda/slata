@@ -10,5 +10,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN mkdir -p /usr/src/app/log
 
 ENV SECRETS_CONFIG /etc/service/secrets.cfg
+ENV DEBUG 1
 
 CMD ["python3", "./app.py"]

@@ -89,7 +89,7 @@ def get_sentiment():
                         neu += 1
                     # print(message["text"] + " has a score: " + str(sentiment_analyzer.polarity_scores(message["text"])))
                 if msg_count > 0:
-                    avg /= msg_count
+                    avg = (avg * 100) / msg_count
                 #TODO: months of years? 
             result.append((timeframe[0], {"pos": pos, "neg": neg, "neu": neu, "avg": avg}))
     except KeyError:

@@ -1,0 +1,201 @@
+swagger: "2.0"
+info:
+  description: "This is the API for Slata - a Slack analytics application."
+  version: "1.0.0"
+  title: "Slata Swagger"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "slata@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "slata.swagger.io"
+basePath: "/v1"
+schemes:
+- "http"
+paths:
+  /status:
+    get:
+      summary: "Status check endpoint"
+      description: ""
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Service is ok"
+        400:
+          description: "Service not running"
+
+  /getSentiment:
+    get:
+      summary: "Get message sentiment"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - name: "n"
+        in: "query"
+        description: "The number of days/weeks/months you wish to retrieve message sentiment history for"
+        required: false
+        type: "number"
+        default: 3
+      - name: "timeframe"
+        in: "query"
+        description: "The timeframe to use for the batch size"
+        required: false
+        type: "string"
+        enum: [day, week, month]
+        default: month
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                timeframe:
+                  description: "The unique timeframe of the dataset"
+                  type: "string"
+                pos:
+                  description: "Number of messages with positive sentiment"
+                  type: "integer"
+                  format: "int64"
+                neg:
+                  description: "Number of messages with negative sentiment"
+                  type: "integer"
+                  format: "int64"
+                neu:
+                  description: "Number of messages with neutral sentiment"
+                  type: "integer"
+                  format: "int64"
+                total:
+                  description: "The total calculated message sentiment over the given period"
+                  type: "integer"
+                  format: "int64"
+        400:  
+          description: "Invalid request"
+  /getMessageCount:
+    get:
+      summary: "Get number of messages"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - name: "n"
+        in: "query"
+        description: "The number of days/weeks/months you wish to retrieve message count for"
+        required: false
+        type: "number"
+        default: 3
+      - name: "timeframe"
+        in: "query"
+        description: "The timeframe to use for the batch size"
+        required: false
+        type: "string"
+        enum: [day, week, month]
+        default: month
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                timeframe:
+                  description: "The unique timeframe of the dataset"
+                  type: "string"
+                num_messages:
+                  type: "integer"
+                  format: "int64"
+        400:  
+          description: "Invalid request"
+  /getReactionsCount:
+    get:
+      summary: "Get number of reactions"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - name: "n"
+        in: "query"
+        description: "The number of days/weeks/months you wish to retrieve reaction count for"
+        required: false
+        type: "number"
+        default: 3
+      - name: "timeframe"
+        in: "query"
+        description: "The timeframe to use for the batch size"
+        required: false
+        type: "string"
+        enum: [day, week, month]
+        default: month
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                timeframe:
+                  description: "The unique timeframe of the dataset"
+                  type: "string"
+                emojis:
+                  type: "array"
+                  items:
+                    type: "object"
+                    properties:
+                      emoji:
+                        type: "string"
+                      count:
+                        type: "integer"
+                        format: "int32"
+        400:  
+          description: "Invalid request"
+  /getMessageTypes:
+    get:
+      summary: "Get the type of message sent"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - name: "n"
+        in: "query"
+        description: "The number of days/weeks/months you wish to retrieve reaction count for"
+        required: false
+        type: "number"
+        default: 3
+      - name: "timeframe"
+        in: "query"
+        description: "The timeframe to use for the batch size"
+        required: false
+        type: "string"
+        enum: [day, week, month]
+        default: month
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                timeframe:
+                  description: "The unique timeframe of the dataset"
+                  type: "string"
+                messages:
+                  type: "object"
+                  properties:
+                    text:
+                      type: "integer"
+                      format: "int64"
+                    files:
+                      type: "integer"
+                      format: "int64"
+                    link:
+                      type: "integer"
+                      format: "int64"
+        400:  
+          description: "Invalid request"

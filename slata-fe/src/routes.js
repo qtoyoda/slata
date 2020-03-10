@@ -32,13 +32,13 @@ var routes = [
     component: Dashboard,
     layout: "/admin"
   },
-  {
-    path: "/tables",
-    name: "Table View",
-    icon: "tim-icons icon-puzzle-10",
-    component: TableList,
-    layout: "/admin"
-  },
+  // {
+  //   path: "/tables",
+  //   name: "Table View",
+  //   icon: "tim-icons icon-puzzle-10",
+  //   component: TableList,
+  //   layout: "/admin"
+  // },
   {
     path: "/user-profile",
     name: "User Profile",

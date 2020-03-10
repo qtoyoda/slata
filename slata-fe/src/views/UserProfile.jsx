@@ -48,9 +48,9 @@ class UserProfile extends React.Component {
                     <Row>
                       <Col className="pr-md-1" md="5">
                         <FormGroup>
-                          <label>Company (disabled)</label>
+                          <label>Company</label>
                           <Input
-                            defaultValue="Creative Code Inc."
+                            defaultValue="Sample Company Inc."
                             disabled
                             placeholder="Company"
                             type="text"
@@ -98,7 +98,7 @@ class UserProfile extends React.Component {
                         </FormGroup>
                       </Col>
                     </Row>
-                    <Row>
+                    {/* <Row>
                       <Col md="12">
                         <FormGroup>
                           <label>Address</label>
@@ -109,8 +109,8 @@ class UserProfile extends React.Component {
                           />
                         </FormGroup>
                       </Col>
-                    </Row>
-                    <Row>
+                    </Row> */}
+                    {/* <Row>
                       <Col className="pr-md-1" md="4">
                         <FormGroup>
                           <label>City</label>
@@ -137,29 +137,29 @@ class UserProfile extends React.Component {
                           <Input placeholder="ZIP Code" type="number" />
                         </FormGroup>
                       </Col>
-                    </Row>
+                    </Row> */}
                     <Row>
                       <Col md="8">
                         <FormGroup>
-                          <label>About Me</label>
+                          <label>Permissions</label>
                           <Input
                             cols="80"
-                            defaultValue="Lamborghini Mercy, Your chick she so thirsty, I'm in
-                            that two seat Lambo."
+                            defaultValue="View Aggregate Sentiment Trends, Daily Message Count, Reaction Count, Type of Messages"
                             placeholder="Here can be your description"
                             rows="4"
                             type="textarea"
+                            disabled
                           />
                         </FormGroup>
                       </Col>
                     </Row>
                   </Form>
                 </CardBody>
-                <CardFooter>
+                {/* <CardFooter>
                   <Button className="btn-fill" color="primary" type="submit">
                     Save
                   </Button>
-                </CardFooter>
+                </CardFooter> */}
               </Card>
             </Col>
             <Col md="4">
@@ -175,31 +175,13 @@ class UserProfile extends React.Component {
                       <img
                         alt="..."
                         className="avatar"
-                        src={require("assets/img/emilyz.jpg")}
+                        src={require("assets/img/mike.jpg")}
                       />
                       <h5 className="title">Mike Andrew</h5>
                     </a>
-                    <p className="description">Ceo/Co-Founder</p>
+                    <p className="description">Sample Company HR Admin</p>
                   </div>
-                  <div className="card-description">
-                    Do not be scared of the truth because we need to restart the
-                    human foundation in truth And I love you like Kanye loves
-                    Kanye I love Rick Owens’ bed design but the back is...
-                  </div>
-                </CardBody>
-                <CardFooter>
-                  <div className="button-container">
-                    <Button className="btn-icon btn-round" color="facebook">
-                      <i className="fab fa-facebook" />
-                    </Button>
-                    <Button className="btn-icon btn-round" color="twitter">
-                      <i className="fab fa-twitter" />
-                    </Button>
-                    <Button className="btn-icon btn-round" color="google">
-                      <i className="fab fa-google-plus" />
-                    </Button>
-                  </div>
-                </CardFooter>
+                </CardBody>s
               </Card>
             </Col>
           </Row>

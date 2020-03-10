@@ -169,7 +169,7 @@ class Dashboard extends React.Component {
                   <h5 className="card-category">Total Messages Exchanged</h5>
                   <CardTitle tag="h3">
                     <i className="tim-icons icon-bell-55 text-info" />{" "}
-                    763,215
+                    1,866,730 total
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
@@ -188,7 +188,7 @@ class Dashboard extends React.Component {
                   <h5 className="card-category">Type of Messages</h5>
                   <CardTitle tag="h3">
                     <i className="tim-icons icon-delivery-fast text-primary" />{" "}
-                    3,500€
+                    236,967 total
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
@@ -204,9 +204,9 @@ class Dashboard extends React.Component {
             <Col lg="4">
               <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">Emojis Used</h5>
+                  <h5 className="card-category">Reactions Used Today</h5>
                   <CardTitle tag="h3">
-                    <i className="tim-icons icon-send text-success" /> 12,100K
+                    <i className="tim-icons icon-send text-success" /> 259 total
                   </CardTitle>
                 </CardHeader>
                 <CardBody>

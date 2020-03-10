@@ -132,32 +132,30 @@ def get_timeframes(timeframe, num_timeframes):
 def get_message_count():
     global channels
     update_channels()
-    prev_months = int(request.args.get('n_months', 3))
+    
+    timeframe = request.args.get("timeframe", "months")
+    num_timeframes = datetime.today().hour if timeframe == "day" else request.args.get('num', '3')
+    timeframes = get_timeframes(timeframe, int(num_timeframes))
+
     url = SLACK_API + CONVERSATION_HISTORY_RESOURCE
     bearer = current_app.config["SLACK_BEARER"]
     headers = { 'Authorization':  'Bearer ' + bearer } 
 
-    # first of current month. Can go backwards months for historic
-    latest = datetime.today()
-    oldest = datetime.today().replace(day=1)
     messages = dict()   # dict of month number to num messages (0 is cur month)
     try:
-        for i in range(prev_months):
+        for timeframe in timeframes:
             for channel in channels:
                 request_body = {
                     'channel': channel,
-                    'oldest': str(oldest.timestamp()),
-                    'latest': str(latest.timestamp())
+                    'oldest': str(timeframe[2].timestamp()),
+                    'latest': str(timeframe[1].timestamp())
                 }
                 r = requests.post(url, data=request_body, headers=headers)
                 body = r.json()
                 # print(body)
-                if i not in messages:
-                    messages[i] = 0
-                messages[i] += len(body["messages"])
-            # go to the previous month
-            latest = oldest 
-            oldest -= relativedelta(months=1)
+                if timeframe[0] not in messages:
+                    messages[timeframe[0]] = 0
+                messages[timeframe[0]] += len(body["messages"])
     except KeyError:
         print("yeah i probably messed up")
         return jsonify({}), HTTP_400_BAD_REQUEST 

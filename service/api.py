@@ -53,41 +53,45 @@ def get_status():
 def get_sentiment():
     global channels
     update_channels()
-    prev_months = int(request.args.get('n_months', 3))
+    
+    timeframe = request.args.get("timeframe", "months")
+    num_timeframes = datetime.today().hour if timeframe == "day" else request.args.get('num', '3')
+    timeframes = get_timeframes(timeframe, int(num_timeframes))
+        
     url = SLACK_API + CONVERSATION_HISTORY_RESOURCE
     bearer = current_app.config["SLACK_BEARER"]
     headers = { 'Authorization':  'Bearer ' + bearer } 
 
     sentiment_analyzer = SentimentIntensityAnalyzer()
-    monthly_vibes = {i: {"pos": 0.0, "neu": 0.0, "neg": 0.0, "total": 0.0} for i in range(prev_months)}
+    result = []
 
-    # first of current month. Can go backwards months for historic
-    latest = datetime.today()
-    oldest = datetime.today().replace(day=1)
     try:
-        for i in range(prev_months):
+        for timeframe in timeframes:
+            msg_count, pos, neg, neu, avg = 0, 0, 0, 0, 0
             for channel in channels:
                 request_body = {
                     'channel': channel,
-                    'oldest': str(oldest.timestamp()),
-                    'latest': str(latest.timestamp())
+                    'oldest': str(timeframe[1].timestamp()),
+                    'latest': str(timeframe[0].timestamp())
                 }
                 r = requests.post(url, data=request_body, headers=headers)
                 body = r.json()
                 # print(body)
                 for message in body["messages"]:
+                    msg_count += 1
                     score = sentiment_analyzer.polarity_scores(message["text"])['compound']
-                    monthly_vibes[i]["total"] += score
+                    avg += score
                     if score > 0:
-                        monthly_vibes[i]["pos"] += 1
+                        pos += 1
                     elif score < 0:
-                        monthly_vibes[i]["neg"] += 1
+                        neg += 1
                     else:
-                        monthly_vibes[i]["neu"] += 1
+                        neu += 1
                     # print(message["text"] + " has a score: " + str(sentiment_analyzer.polarity_scores(message["text"])))
-            # go to the previous month
-            latest = oldest 
-            oldest -= relativedelta(months=1)
+                if msg_count > 0:
+                    avg /= msg_count
+                #TODO: months of years? 
+            result.append(("wat", {"pos": pos, "neg": neg, "neu": neu, "avg": avg}))
     except KeyError:
         print("yeah i probably messed up")
         return jsonify({}), HTTP_400_BAD_REQUEST 
@@ -95,7 +99,28 @@ def get_sentiment():
         print("Bad request", sys.exc_info()[0])
         return jsonify({}), HTTP_400_BAD_REQUEST
     
-    return jsonify(monthly_vibes), HTTP_200_OK
+    return jsonify(result), HTTP_200_OK
+
+def get_timeframes(timeframe, num_timeframes):
+    intervals = []
+    latest = datetime.today()
+    oldest = datetime.today()
+
+    for i in range (num_timeframes):
+        if (timeframe == "months"):
+            if (latest.day != 1):
+                oldest = latest.replace(day=1)
+            else:
+                oldest -= relativedelta(months=1)
+        if (timeframe == "weeks"):
+            oldest -= relativedelta(weekday=6)
+            oldest -= relativedelta(weeks=1)
+        if (timeframe == "day"):
+            oldest -= relativedelta(hours=1)
+        intervals.append((latest, oldest))
+        latest = oldest
+    # print(intervals)
+    return intervals
 
 # ARGS:
 #      n_months - number of months to go back and retrieve messages

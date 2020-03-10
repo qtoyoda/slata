@@ -53,7 +53,7 @@ def get_status():
 def get_sentiment():
     global channels
     update_channels()
-    
+
     timeframe = request.args.get("timeframe", "months")
     num_timeframes = datetime.today().hour if timeframe == "day" else request.args.get('num', '3')
     timeframes = get_timeframes(timeframe, int(num_timeframes))
@@ -71,8 +71,8 @@ def get_sentiment():
             for channel in channels:
                 request_body = {
                     'channel': channel,
-                    'oldest': str(timeframe[1].timestamp()),
-                    'latest': str(timeframe[0].timestamp())
+                    'oldest': str(timeframe[2].timestamp()),
+                    'latest': str(timeframe[1].timestamp())
                 }
                 r = requests.post(url, data=request_body, headers=headers)
                 body = r.json()
@@ -91,7 +91,7 @@ def get_sentiment():
                 if msg_count > 0:
                     avg /= msg_count
                 #TODO: months of years? 
-            result.append(("wat", {"pos": pos, "neg": neg, "neu": neu, "avg": avg}))
+            result.append((timeframe[0], {"pos": pos, "neg": neg, "neu": neu, "avg": avg}))
     except KeyError:
         print("yeah i probably messed up")
         return jsonify({}), HTTP_400_BAD_REQUEST 
@@ -105,19 +105,22 @@ def get_timeframes(timeframe, num_timeframes):
     intervals = []
     latest = datetime.today()
     oldest = datetime.today()
-
+    label = ""
     for i in range (num_timeframes):
         if (timeframe == "months"):
             if (latest.day != 1):
                 oldest = latest.replace(day=1)
             else:
                 oldest -= relativedelta(months=1)
+            label = oldest.strftime("%b")
         if (timeframe == "weeks"):
             oldest -= relativedelta(weekday=6)
             oldest -= relativedelta(weeks=1)
+            label = oldest.strftime("%m/%d/%Y") + " - " + latest.strftime("%m/%d/%Y")
         if (timeframe == "day"):
             oldest -= relativedelta(hours=1)
-        intervals.append((latest, oldest))
+            label = latest.strftime("%H")
+        intervals.append((label, latest, oldest))
         latest = oldest
     # print(intervals)
     return intervals
@@ -165,11 +168,52 @@ def get_message_count():
 
 @v1api.route('/getMessageTypes', methods=['GET'])
 def get_message_types():
-    dummy_payload = """
-    {
-    }
-    """
-    return jsonify(dummy_payload), HTTP_200_OK
+    global channels
+    update_channels()
+    
+    timeframe = request.args.get("timeframe", "months")
+    num_timeframes = datetime.today().hour if timeframe == "day" else request.args.get('num', '3')
+    timeframes = get_timeframes(timeframe, int(num_timeframes))
+        
+    url = SLACK_API + CONVERSATION_HISTORY_RESOURCE
+    bearer = current_app.config["SLACK_BEARER"]
+    headers = { 'Authorization':  'Bearer ' + bearer } 
+
+    result = []
+
+    try:
+        for timeframe in timeframes:
+            files, links, text = 0, 0, 0
+            for channel in channels:
+                request_body = {
+                    'channel': channel,
+                    'oldest': str(timeframe[2].timestamp()),
+                    'latest': str(timeframe[1].timestamp())
+                }
+                r = requests.post(url, data=request_body, headers=headers)
+                body = r.json()
+                # print(body)
+                for message in body["messages"]:
+                    # print(message)
+                    if "blocks" in message:
+                        for blocks in message["blocks"]:
+                            for message_elements in blocks["elements"]:
+                                for element in message_elements["elements"]:
+                                    if element["type"] == "link":
+                                        links += 1
+                                    elif element["type"] == "text":
+                                        text += 1
+                    elif "files" in message:
+                        files += 1
+            result.append((timeframe[0], {"text": text, "links": links, "files": files}))
+    except KeyError:
+        print("yeah i probably messed up")
+        return jsonify({}), HTTP_400_BAD_REQUEST 
+    except:
+        print("Bad request", sys.exc_info()[0])
+        return jsonify({}), HTTP_400_BAD_REQUEST
+    
+    return jsonify(result), HTTP_200_OK
 
 @v1api.route('/getReactionsCount', methods=['GET'])
 def get_reactions():
